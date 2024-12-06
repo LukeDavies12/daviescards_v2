@@ -2,14 +2,17 @@ import React, { useEffect, useRef, useState } from "react";
 import { GameWithPlayerScores } from "./AdminToggle";
 import Link from "next/link";
 import { Ellipsis } from "lucide-react";
+import { deleteGame } from "./adminActions";
 
 const GameTable = ({ initialGames }: { initialGames: GameWithPlayerScores[] }) => {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  // Sort games by date from most recent to oldest
+  const sortedGames = initialGames.slice().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-  const paginatedGames = initialGames.slice(
+  const paginatedGames = sortedGames.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -34,6 +37,14 @@ const GameTable = ({ initialGames }: { initialGames: GameWithPlayerScores[] }) =
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [openMenuId]);
+
+  const handleDelete = async (id: string) => {
+    console.log("Deleting game with ID:", id);
+    if (window.confirm("Are you sure you want to delete this game?")) {
+      await deleteGame(id);
+      // You might want to update the local state or refetch the games here
+    }
+  };
 
   return (
     <div className="w-full">
@@ -153,6 +164,12 @@ const GameTable = ({ initialGames }: { initialGames: GameWithPlayerScores[] }) =
                             Edit Game
                           </button>
                         </Link>
+                        <button
+                          className="w-full text-left px-4 py-2 text-red-700 hover:bg-neutral-50 active:bg-neutral-100 rounded-md transition-colors"
+                          onClick={() => handleDelete(game.id.toString())}
+                        >
+                          Delete Game
+                        </button>
                       </div>
                     )}
                   </div>
@@ -199,7 +216,7 @@ const GameTable = ({ initialGames }: { initialGames: GameWithPlayerScores[] }) =
 
       <div className="mt-4 flex justify-center space-x-2">
         {Array.from({
-          length: Math.ceil(initialGames.length / itemsPerPage),
+          length: Math.ceil(sortedGames.length / itemsPerPage),
         }).map((_, index) => (
           <button
             key={index}

@@ -50,7 +50,7 @@ export async function createGame(formData: FormData) {
     Array.from(formData.entries())
       .filter(([key]) => key.startsWith("player-"))
       .forEach(([key, value]) => {
-        const index = key.split("-")[1]; 
+        const index = key.split("-")[1];
         if (!playersAndScores[index]) playersAndScores[index] = {};
         playersAndScores[index].playerId = value.toString();
       });
@@ -58,7 +58,7 @@ export async function createGame(formData: FormData) {
     Array.from(formData.entries())
       .filter(([key]) => key.startsWith("score-"))
       .forEach(([key, value]) => {
-        const index = key.split("-")[1]; 
+        const index = key.split("-")[1];
         playersAndScores[index].score = parseInt(value.toString(), 10);
       });
 
@@ -102,7 +102,7 @@ export async function updateGame(gameId: string, formData: FormData) {
   Array.from(formData.entries())
     .filter(([key]) => key.startsWith("player-"))
     .forEach(([key, value]) => {
-      const index = key.split("-")[1]; 
+      const index = key.split("-")[1];
       if (!playersAndScores[index]) playersAndScores[index] = {};
       playersAndScores[index].playerId = value.toString();
     });
@@ -110,7 +110,7 @@ export async function updateGame(gameId: string, formData: FormData) {
   Array.from(formData.entries())
     .filter(([key]) => key.startsWith("score-"))
     .forEach(([key, value]) => {
-      const index = key.split("-")[1]; 
+      const index = key.split("-")[1];
       playersAndScores[index].score = parseInt(value.toString(), 10);
     });
 
@@ -153,12 +153,16 @@ export async function updateGame(gameId: string, formData: FormData) {
 }
 
 export async function deleteGame(id: string) {
-  try {
-    await db.game.delete({
-      where: { id },
-    });
-  } catch (error) {
-    console.log(error);
+  await db.playerScore.deleteMany({
+    where: { game_id: id },
+  });
+
+  const game = await db.game.delete({
+    where: { id },
+  });
+
+  if (!game) {
+    throw new Error("Game not deleted.");
   }
 
   revalidatePath("/admin");
