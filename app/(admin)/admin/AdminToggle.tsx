@@ -4,8 +4,9 @@ import { Player, Prisma } from "@prisma/client";
 import { ArrowRightCircle, Ellipsis, MoveRightIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import GameTable from "./GameTable";
 
-type GameWithPlayerScores = Prisma.GameGetPayload<{
+export type GameWithPlayerScores = Prisma.GameGetPayload<{
   include: {
     player_scores: {
       include: {
@@ -65,11 +66,7 @@ export default function AdminToggle({
         {showContent === "games" ? (
           <>
             <Link href={"/admin/game/new"} className="text-red-700 font-medium my-8 py-1 flex gap-2 items-center">New Game<ArrowRightCircle className="w-4" /></Link>
-            <ul>
-              {initialGames.map(game => (
-                <li key={game.id}>{game.date.toString()}</li>
-              ))}
-            </ul>
+            <GameTable initialGames={initialGames} />
           </>
         ) : (
           <>
@@ -111,7 +108,7 @@ export default function AdminToggle({
                         </button>
 
                         {openMenuId === player.id && (
-                          <div className="absolute left-6 top-full z-10 mt-1 w-48 bg-white border border-neutral-200 rounded-md shadow-lg" ref={dropdownRef}>
+                          <div className="absolute right-0 top-full z-10 mt-1 w-48 bg-white border border-neutral-200 rounded-md shadow-lg" ref={dropdownRef}>
                             <Link href={`/admin/player/${player.id}`}>
                               <button
                                 className="w-full text-left px-4 py-2 hover:bg-neutral-50 active:bg-neutral-100 rounded-md transition-colors"
@@ -129,7 +126,7 @@ export default function AdminToggle({
             </table>
           </>
         )}
-      </div>
+      </div >
     </>
   );
 }
