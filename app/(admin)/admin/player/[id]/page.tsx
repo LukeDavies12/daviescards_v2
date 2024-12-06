@@ -1,4 +1,5 @@
 import { db } from "@/db";
+import UpdatePlayerForm from "./UpdatePlayerForm";
 
 export default async function Page({
   params,
@@ -19,5 +20,13 @@ export default async function Page({
     return <div>Error: Player not found</div>;
   }
 
-  return <div>Player: {player.name}</div>;
+  return(
+    <>
+      <div className="xl:w-1/2 md:w-3/4 xl:p-6 xl:mx-auto border border-neutral-100 rounded-xl">
+      <h1>Edit Player: {player.name}</h1>
+      <UpdatePlayerForm player={player} />
+      </div>
+    </>
+  )
+  ;
 }

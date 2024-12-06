@@ -10,13 +10,14 @@ export default function AdminLayout({
 }>) {
   return (
     <>
-      <nav className="container mx-auto px-4 flex justify-between items-center">
-        <Link href="/" className="mt-4 flex items-center">
-          <Image src="/dc_logo.png" height={32} width={100} alt="Logo" className="rounded-md w-8"></Image><span className="text-red-900 font-bold ml-1">Davies Cards</span>
-        </Link>
+      <nav className="container mx-auto px-4 flex justify-between items-center my-3">
+        <div>
+          <Link href="/admin" className="flex items-center">
+            <Image src="/dc_logo.png" height={32} width={32} alt="Logo" className="rounded-md w-8" />
+            <span className="text-red-700 font-bold ml-1">Davies Cards</span>
+          </Link>
+        </div>
         <div className="flex items-center gap-5">
-          <DefLink href="/" text="Leaderboard" />
-          <DefLink href="/games" text="Game Log" />
           <UserButton />
         </div>
       </nav>

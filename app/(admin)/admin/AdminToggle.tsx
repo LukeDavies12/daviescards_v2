@@ -1,7 +1,7 @@
 "use client";
 
 import { Player, Prisma } from "@prisma/client";
-import { Ellipsis } from "lucide-react";
+import { ArrowRightCircle, Ellipsis, MoveRightIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -26,13 +26,6 @@ export default function AdminToggle({
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleDelete = (player: Player) => {
-    confirm(`Are you sure you want to delete ${player.name}?`);
-    // Implement delete logic here
-    console.log(`Deleting player: ${player.name}`);
-    setOpenMenuId(null);
-  };
-
   useEffect(() => {
     const handleClickOutside = (event: any) => {
       if (setOpenMenuId && dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -50,10 +43,10 @@ export default function AdminToggle({
   return (
     <>
       <h1>Admin</h1>
-      <div className="p-1 bg-neutral-50 rounded-xl inline-flex my-1">
+      <div className="p-1 bg-neutral-100 inline-flex my-1 rounded-lg text-black">
         <div>
           <button
-            className={`px-3 py-1 hover:text-neutral-800 active:text-black ${showContent === "games" ? "bg-white rounded-lg" : ""}`}
+            className={`px-3 py-1 hover:text-neutral-600 rounded-md transition-colors duration-100 ease-linear active:text-neutral-500 ${showContent === "games" ? "bg-white text-neutral-500 hover:text-neutral-500 shadow-sm" : ""}`}
             onClick={() => setShowContent("games")}
           >
             Games
@@ -61,7 +54,7 @@ export default function AdminToggle({
         </div>
         <div>
           <button
-            className={`px-3 py-1 hover:text-neutral-800 active:text-black ${showContent === "players" ? "bg-white rounded-lg" : ""}`}
+            className={`px-3 py-1 hover:text-neutral-600 rounded-md transition-colors duration-100 ease-linear active:text-neutral-500 ${showContent === "players" ? "bg-white text-neutral-500 hover:text-neutral-500 shadow-sm" : ""}`}
             onClick={() => setShowContent("players")}
           >
             Players
@@ -79,9 +72,10 @@ export default function AdminToggle({
           </>
         ) : (
           <>
+            <Link href={"/admin/player/new"} className="text-red-700 font-medium my-8 py-1 flex gap-2 items-center">New Player<ArrowRightCircle className="w-4"/></Link>
             <table className="table-auto w-full border-collapse text-left text-sm">
               <thead>
-                <tr className="border-b border-gray-100">
+                <tr>
                   <th className="font-medium text-gray-700">Name</th>
                   <th className="font-medium text-gray-700">Created</th>
                   <th className="font-medium text-gray-700">Last Updated</th>
@@ -110,25 +104,20 @@ export default function AdminToggle({
                       <div className="relative">
                         <button
                           onClick={() => setOpenMenuId(openMenuId === player.id ? null : player.id)}
-                          className="bg-neutral-700 hover:bg-neutral-800 active:bg-black transition-colors duration-200 ease-linear rounded-md px-3"
+                          className="border-neutral-100 border hover:bg-neutral-100 active:text-neutral-500 text-neutral-800 transition-colors duration-200 ease-linear rounded-md px-2"
                         >
-                          <Ellipsis className="w-6 h-4 text-neutral-400" />
+                          <Ellipsis className="w-6 h-4" />
                         </button>
 
                         {openMenuId === player.id && (
-                          <div className="absolute left-6 top-full z-10 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg" ref={dropdownRef}>
+                          <div className="absolute left-6 top-full z-10 mt-1 w-48 bg-white border border-neutral-200 rounded-md shadow-lg" ref={dropdownRef}>
                             <Link href={`/admin/player/${player.id}`}>
                               <button
-                                className="w-full text-left px-4 py-2 hover:bg-neutral-100 transition-colors"
+                                className="w-full text-left px-4 py-2 hover:bg-neutral-50 active:bg-neutral-100 rounded-md transition-colors"
                               >
                                 Edit {player.name}
-                              </button></Link>
-                            <button
-                              onClick={() => handleDelete(player)}
-                              className="w-full text-left px-4 py-2 hover:bg-neutral-100 text-red-600 transition-colors"
-                            >
-                              Delete {player.name}
-                            </button>
+                              </button>
+                            </Link>
                           </div>
                         )}
                       </div>

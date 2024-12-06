@@ -3,60 +3,76 @@
 import { db } from "@/db";
 import { Game } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
-export async function createPlayer(name: string) {
+export async function createPlayer(formData: FormData) {
+  const name = formData.get("name") as string;
+
   try {
     const player = await db.player.create({
       data: { name },
     });
-    revalidatePath("/admin");
-    return { success: true, player };
   } catch (error) {
-    return { success: false, error: "Failed to create player" };
+    console.log(error);
   }
+
+  revalidatePath("/admin");
+  redirect("/admin");
 }
 
-export async function deletePlayer(id: string) {
+export async function updatePlayer(playerId: string, formData: FormData) {
+  const name = formData.get("name") as string;
+
   try {
-    await db.player.delete({
-      where: { id },
+    const player = await db.player.update({
+      where: { id: playerId },
+      data: { name },
     });
-    revalidatePath("/admin");
-    return { success: true };
   } catch (error) {
-    return { success: false, error: "Failed to delete player" };
+    console.log(error);
   }
+
+  revalidatePath("/admin");
+  redirect("/admin");
 }
 
-export async function createGame(gameData: Omit<Game, "id" | "created_at" | "updated_at"> & { player_scores: { player_id: string; score: number }[] }) {
+export async function createGame(
+  gameData: Omit<Game, "id" | "created_at" | "updated_at"> & {
+    player_scores: { player_id: string; score: number }[];
+  }
+) {
   try {
     const game = await db.game.create({
       data: {
         date: new Date(gameData.date),
         message: gameData.message,
         player_scores: {
-          create: gameData.player_scores.map(ps => ({
+          create: gameData.player_scores.map((ps) => ({
             player: { connect: { id: ps.player_id } },
-            score: ps.score
-          }))
-        }
+            score: ps.score,
+          })),
+        },
       },
       include: {
         player_scores: {
           include: {
-            player: true
-          }
-        }
-      }
+            player: true,
+          },
+        },
+      },
     });
-    revalidatePath("/admin");
-    return { success: true, game };
   } catch (error) {
-    return { success: false, error: "Failed to create game" };
+    console.log(error);
   }
+
+  revalidatePath("/admin");
 }
 
-export async function updateGame(gameData: Omit<Game, "created_at" | "updated_at"> & { player_scores: { player_id: string; score: number }[] }) { // Updated type definition
+export async function updateGame(
+  gameData: Omit<Game, "created_at" | "updated_at"> & {
+    player_scores: { player_id: string; score: number }[];
+  }
+) {
   try {
     const game = await db.game.update({
       where: { id: gameData.id },
@@ -65,25 +81,26 @@ export async function updateGame(gameData: Omit<Game, "created_at" | "updated_at
         message: gameData.message,
         player_scores: {
           deleteMany: {},
-          create: gameData.player_scores.map(ps => ({
+          create: gameData.player_scores.map((ps) => ({
             player: { connect: { id: ps.player_id } },
-            score: ps.score
-          }))
-        }
+            score: ps.score,
+          })),
+        },
       },
       include: {
         player_scores: {
           include: {
-            player: true
-          }
-        }
-      }
+            player: true,
+          },
+        },
+      },
     });
-    revalidatePath("/admin");
-    return { success: true, game };
   } catch (error) {
-    return { success: false, error: "Failed to update game" };
+    console.log(error);
   }
+
+  revalidatePath("/admin");
+  redirect("/admin");
 }
 
 export async function deleteGame(id: string) {
@@ -91,9 +108,9 @@ export async function deleteGame(id: string) {
     await db.game.delete({
       where: { id },
     });
-    revalidatePath("/admin");
-    return { success: true };
   } catch (error) {
-    return { success: false, error: "Failed to delete game" };
+    console.log(error);
   }
+
+  revalidatePath("/admin");
 }
