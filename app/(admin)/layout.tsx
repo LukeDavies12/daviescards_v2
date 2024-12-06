@@ -12,9 +12,9 @@ export default function AdminLayout({
     <>
       <nav className="container mx-auto px-4 flex justify-between items-center">
         <Link href="/" className="mt-4 flex items-center">
-          <Image src="/dc_logo.png" height={32} width={100} alt="Logo" className="rounded-md w-12"></Image><span className="text-red-900 font-bold ">Davies Cards</span>
+          <Image src="/dc_logo.png" height={32} width={100} alt="Logo" className="rounded-md w-8"></Image><span className="text-red-900 font-bold ml-1">Davies Cards</span>
         </Link>
-        <div className="flex items-center gap-12">
+        <div className="flex items-center gap-5">
           <DefLink href="/" text="Leaderboard" />
           <DefLink href="/games" text="Game Log" />
           <UserButton />

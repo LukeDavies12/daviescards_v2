@@ -3,16 +3,16 @@ import { db } from "@/db";
 export default async function Page({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ id: string }>
 }) {
-  const slug = (await params).slug
+  const playerId = (await params).id
 
-  if (!slug) {
+  if (!playerId) {
     return <div>Error: Player ID is missing</div>;
   }
 
   const player = await db.player.findUnique({
-    where: { id: slug },
+    where: { id: playerId },
   });
 
   if (!player) {

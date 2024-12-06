@@ -50,7 +50,7 @@ export default function AdminToggle({
   return (
     <>
       <h1>Admin</h1>
-      <div className="p-1 bg-neutral-100 rounded-xl inline-flex my-1">
+      <div className="p-1 bg-neutral-50 rounded-xl inline-flex my-1">
         <div>
           <button
             className={`px-3 py-1 hover:text-neutral-800 active:text-black ${showContent === "games" ? "bg-white rounded-lg" : ""}`}
@@ -110,9 +110,9 @@ export default function AdminToggle({
                       <div className="relative">
                         <button
                           onClick={() => setOpenMenuId(openMenuId === player.id ? null : player.id)}
-                          className="border-neutral-100 border rounded-lg hover:bg-neutral-50 active:bg-neutral-100 transition-colors duration-200 ease-linear"
+                          className="bg-neutral-700 hover:bg-neutral-800 active:bg-black transition-colors duration-200 ease-linear rounded-md px-3"
                         >
-                          <Ellipsis className="w-12 text-black" />
+                          <Ellipsis className="w-6 h-4 text-neutral-400" />
                         </button>
 
                         {openMenuId === player.id && (
