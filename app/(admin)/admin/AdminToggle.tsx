@@ -113,7 +113,7 @@ export default function AdminToggle({
                               <button
                                 className="w-full text-left px-4 py-2 hover:bg-neutral-50 active:bg-neutral-100 rounded-md transition-colors"
                               >
-                                Edit {player.name}
+                                Edit Player
                               </button>
                             </Link>
                           </div>

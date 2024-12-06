@@ -1,7 +1,6 @@
 "use server";
 
 import { db } from "@/db";
-import { Game } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -51,7 +50,7 @@ export async function createGame(formData: FormData) {
     Array.from(formData.entries())
       .filter(([key]) => key.startsWith("player-"))
       .forEach(([key, value]) => {
-        const index = key.split("-")[1]; // Extract index
+        const index = key.split("-")[1]; 
         if (!playersAndScores[index]) playersAndScores[index] = {};
         playersAndScores[index].playerId = value.toString();
       });
@@ -59,21 +58,18 @@ export async function createGame(formData: FormData) {
     Array.from(formData.entries())
       .filter(([key]) => key.startsWith("score-"))
       .forEach(([key, value]) => {
-        const index = key.split("-")[1]; // Extract index
+        const index = key.split("-")[1]; 
         playersAndScores[index].score = parseInt(value.toString(), 10);
       });
 
-    // Validate date
     if (!date || isNaN(Date.parse(date.toString()))) {
       throw new Error("Invalid or missing date.");
     }
 
-    // Validate players and scores
     if (!Object.keys(playersAndScores).length) {
       throw new Error("At least one player and score are required.");
     }
 
-    // Create Game
     const game = await db.game.create({
       data: {
         date: new Date(date.toString()),
@@ -97,22 +93,46 @@ export async function createGame(formData: FormData) {
   redirect("/admin");
 }
 
-export async function updateGame(
-  gameData: Omit<Game, "created_at" | "updated_at"> & {
-    player_scores: { player_id: string; score: number }[];
+export async function updateGame(gameId: string, formData: FormData) {
+  const date = formData.get("date");
+  const message = formData.get("message");
+  const location = formData.get("location");
+  const playersAndScores: { [key: string]: PlayerScore } = {};
+
+  Array.from(formData.entries())
+    .filter(([key]) => key.startsWith("player-"))
+    .forEach(([key, value]) => {
+      const index = key.split("-")[1]; 
+      if (!playersAndScores[index]) playersAndScores[index] = {};
+      playersAndScores[index].playerId = value.toString();
+    });
+
+  Array.from(formData.entries())
+    .filter(([key]) => key.startsWith("score-"))
+    .forEach(([key, value]) => {
+      const index = key.split("-")[1]; 
+      playersAndScores[index].score = parseInt(value.toString(), 10);
+    });
+
+  if (!date || isNaN(Date.parse(date.toString()))) {
+    throw new Error("Invalid or missing date.");
   }
-) {
+
+  if (!Object.keys(playersAndScores).length) {
+    throw new Error("At least one player and score are required.");
+  }
+
   try {
     const game = await db.game.update({
-      where: { id: gameData.id },
+      where: { id: gameId },
       data: {
-        date: new Date(gameData.date),
-        message: gameData.message,
+        date: new Date(date.toString()),
+        message: message?.toString() || null,
         player_scores: {
           deleteMany: {},
-          create: gameData.player_scores.map((ps) => ({
-            player: { connect: { id: ps.player_id } },
-            score: ps.score,
+          create: Object.values(playersAndScores).map((ps) => ({
+            player: { connect: { id: ps.playerId } },
+            score: ps.score ?? 0,
           })),
         },
       },

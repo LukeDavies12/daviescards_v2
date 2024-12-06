@@ -1,14 +1,15 @@
 'use client'
 
-import { Player, Game as PrismaGame, PlayerScore } from "@prisma/client"
-
+import { Player } from "@prisma/client"
 import { Trash2Icon } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import { GameWithPlayerScores } from "../../AdminToggle"
+import { updateGame } from "../../adminActions"
 
 export default function UpdateGameForm({ game, players }: { game: GameWithPlayerScores, players: Player[] }) {
-  const [playerScoreCount, setPlayerScoreCount] = useState(game.player_scores?.length || 1)
-  const playerRefs = useRef<HTMLSelectElement[]>([])
+  const [playerScores, setPlayerScores] = useState(
+    game.player_scores?.map((score) => ({ player_id: score.player_id, score: score.score })) || [{ player_id: "", score: 0 }]
+  )
   const dateInputRef = useRef<HTMLInputElement>(null)
   const [initialized, setInitialized] = useState(false)
 
@@ -20,20 +21,19 @@ export default function UpdateGameForm({ game, players }: { game: GameWithPlayer
   }, [initialized])
 
   const addPlayer = () => {
-    setPlayerScoreCount((prev) => prev + 1)
+    setPlayerScores((prev) => [...prev, { player_id: "", score: 0 }])
   }
 
-  useEffect(() => {
-    if (initialized && playerRefs.current.length > 1) {
-      const lastSelect = playerRefs.current[playerRefs.current.length - 1]
-      lastSelect?.focus()
-    }
-  }, [playerScoreCount, initialized])
+  const removePlayer = (index: number) => {
+    setPlayerScores((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const updateGameWithId = updateGame.bind(null, game.id)
 
   return (
     <div className="xl:w-1/2 md:w-3/4 p-6 xl:mx-auto border border-neutral-100 rounded-xl">
       <h1>Update Game</h1>
-      <form className="flex flex-col gap-4 mt-4" action="">
+      <form className="flex flex-col gap-4 mt-4" action={updateGameWithId}>
         <div>
           <label htmlFor="date" className="block font-medium mb-1">Date</label>
           <input
@@ -70,16 +70,18 @@ export default function UpdateGameForm({ game, players }: { game: GameWithPlayer
         <div>
           <p className="font-medium mb-2 cursor-default">Player Scores</p>
           <div className="flex flex-col gap-1">
-            {Array.from({ length: playerScoreCount }).map((_, i) => (
+            {playerScores.map((playerScore, i) => (
               <div key={i} className="flex gap-2">
                 <select
                   className="w-1/2 p-2 border rounded"
                   name={`player-${i}`}
                   id={`player-${i}`}
-                  defaultValue={game.player_scores?.[i]?.player_id || ""}
-                  ref={(el) => {
-                    if (el) playerRefs.current[i] = el
-                  }}
+                  value={playerScore.player_id}
+                  onChange={(e) =>
+                    setPlayerScores((prev) =>
+                      prev.map((ps, idx) => idx === i ? { ...ps, player_id: e.target.value } : ps)
+                    )
+                  }
                 >
                   <option value="">Select Player</option>
                   {players.map(player => (
@@ -91,11 +93,16 @@ export default function UpdateGameForm({ game, players }: { game: GameWithPlayer
                   name={`score-${i}`}
                   id={`score-${i}`}
                   className="w-1/2 p-2 border rounded"
-                  defaultValue={game.player_scores?.[i]?.score || 0}
+                  value={playerScore.score}
+                  onChange={(e) =>
+                    setPlayerScores((prev) =>
+                      prev.map((ps, idx) => idx === i ? { ...ps, score: +e.target.value } : ps)
+                    )
+                  }
                 />
                 <button
                   type="button"
-                  onClick={() => setPlayerScoreCount((prev) => Math.max(1, prev - 1))}
+                  onClick={() => removePlayer(i)}
                   className="text-neutral-500 hover:text-neutral-700"
                 >
                   <Trash2Icon className="w-4" />

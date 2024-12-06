@@ -9,17 +9,15 @@ export default function NewGame({ players }: { players: Player[] }) {
   const [playerScoreCount, setPlayerScoreCount] = useState(1)
   const playerRefs = useRef<HTMLSelectElement[]>([])
   const dateInputRef = useRef<HTMLInputElement>(null)
-  const [initialized, setInitialized] = useState(false) // Prevents focusing select on initial load
+  const [initialized, setInitialized] = useState(false)
 
-  // Focus the date input on page load
   useEffect(() => {
     if (!initialized) {
       dateInputRef.current?.focus()
-      setInitialized(true) // Mark as initialized to allow future focusing on select elements
+      setInitialized(true)
     }
   }, [initialized])
 
-  // Add player and focus on the newly added select
   const addPlayer = () => {
     setPlayerScoreCount((prev) => prev + 1)
   }
@@ -43,7 +41,7 @@ export default function NewGame({ players }: { players: Player[] }) {
             id="date"
             defaultValue={new Date().toISOString().split("T")[0]}
             required
-            ref={dateInputRef} // Assign ref to the date input
+            ref={dateInputRef}
             className="w-full p-2 border rounded"
           />
         </div>
@@ -76,7 +74,6 @@ export default function NewGame({ players }: { players: Player[] }) {
                   id={`player-${i}`}
                   required
                   ref={(el) => {
-                    // Save the reference to the current select element
                     if (el) playerRefs.current[i] = el
                   }}
                 >

@@ -31,10 +31,7 @@ export default async function Page({
 
   return (
     <>
-      <div className="xl:w-1/2 md:w-3/4 xl:p-6 xl:mx-auto border border-neutral-100 rounded-xl">
-        <h1>Edit Game</h1>
-        <UpdateGameForm game={game} players={players} />
-      </div>
+      <UpdateGameForm game={game} players={players} />
     </>
   )
     ;
