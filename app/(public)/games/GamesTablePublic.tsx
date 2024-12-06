@@ -22,7 +22,7 @@ export default function GamesTablePublic({ initialGames }: { initialGames: GameW
   return (
     <div className="w-full">
       <h1>Game Log</h1>
-      <div className="md:hidden">
+      <div className="md:hidden mt-4">
         {paginatedGames.map((game: GameWithPlayerScores) => (
           <div key={game.id} className="border-b border-neutral-100 p-4">
             <p>
@@ -70,7 +70,7 @@ export default function GamesTablePublic({ initialGames }: { initialGames: GameW
           </div>
         ))}
       </div>
-      <table className="hidden md:table table-auto w-full border-collapse text-left text-sm">
+      <table className="hidden md:table table-auto w-full border-collapse text-left text-sm mt-4">
         <thead>
           <tr>
             <th className="font-medium text-gray-700">Date</th>

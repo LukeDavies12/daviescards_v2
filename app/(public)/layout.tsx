@@ -18,6 +18,7 @@ export default function PublicLayout({
         </div>
         <div className="flex items-center gap-5">
           <DefLink href="/" text="Leaderboard" />
+          <DefLink href="/high-scores" text="High Scores" />
           <DefLink href="/games" text="Game Log" />
         </div>
       </nav>

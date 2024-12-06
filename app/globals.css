@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 h1 {
-  @apply font-bold text-neutral-950 text-lg;
+  @apply font-bold text-neutral-950 text-base;
 }
 
 h2 {
