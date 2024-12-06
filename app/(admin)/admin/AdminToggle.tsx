@@ -64,6 +64,7 @@ export default function AdminToggle({
       <div>
         {showContent === "games" ? (
           <>
+            <Link href={"/admin/game/new"} className="text-red-700 font-medium my-8 py-1 flex gap-2 items-center">New Game<ArrowRightCircle className="w-4" /></Link>
             <ul>
               {initialGames.map(game => (
                 <li key={game.id}>{game.date.toString()}</li>
@@ -72,7 +73,7 @@ export default function AdminToggle({
           </>
         ) : (
           <>
-            <Link href={"/admin/player/new"} className="text-red-700 font-medium my-8 py-1 flex gap-2 items-center">New Player<ArrowRightCircle className="w-4"/></Link>
+            <Link href={"/admin/player/new"} className="text-red-700 font-medium my-8 py-1 flex gap-2 items-center">New Player<ArrowRightCircle className="w-4" /></Link>
             <table className="table-auto w-full border-collapse text-left text-sm">
               <thead>
                 <tr>

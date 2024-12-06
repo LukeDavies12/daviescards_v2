@@ -9,3 +9,11 @@ h1 {
 h2 {
   @apply font-semibold text-neutral-800;
 }
+
+button.primary {
+  @apply bg-red-700 rounded-md text-white px-3 py-2 font-semibold text-sm hover:bg-red-600 active:text-red-100 transition-colors duration-100 ease-linear
+}
+
+input, textarea, select {
+  @apply px-3 py-2 rounded-lg border border-neutral-100 hover:border-neutral-300 focus:outline-red-700 transition-colors duration-100 ease-linear
+}

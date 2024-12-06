@@ -36,36 +36,65 @@ export async function updatePlayer(playerId: string, formData: FormData) {
   redirect("/admin");
 }
 
-export async function createGame(
-  gameData: Omit<Game, "id" | "created_at" | "updated_at"> & {
-    player_scores: { player_id: string; score: number }[];
-  }
-) {
+interface PlayerScore {
+  playerId?: string;
+  score?: number;
+}
+
+export async function createGame(formData: FormData) {
   try {
+    const date = formData.get("date");
+    const message = formData.get("message");
+    const location = formData.get("location");
+    const playersAndScores: { [key: string]: PlayerScore } = {};
+
+    Array.from(formData.entries())
+      .filter(([key]) => key.startsWith("player-"))
+      .forEach(([key, value]) => {
+        const index = key.split("-")[1]; // Extract index
+        if (!playersAndScores[index]) playersAndScores[index] = {};
+        playersAndScores[index].playerId = value.toString();
+      });
+
+    Array.from(formData.entries())
+      .filter(([key]) => key.startsWith("score-"))
+      .forEach(([key, value]) => {
+        const index = key.split("-")[1]; // Extract index
+        playersAndScores[index].score = parseInt(value.toString(), 10);
+      });
+
+    // Validate date
+    if (!date || isNaN(Date.parse(date.toString()))) {
+      throw new Error("Invalid or missing date.");
+    }
+
+    // Validate players and scores
+    if (!Object.keys(playersAndScores).length) {
+      throw new Error("At least one player and score are required.");
+    }
+
+    // Create Game
     const game = await db.game.create({
       data: {
-        date: new Date(gameData.date),
-        message: gameData.message,
+        date: new Date(date.toString()),
+        message: message?.toString() || null,
+        location: location?.toString() || null,
         player_scores: {
-          create: gameData.player_scores.map((ps) => ({
-            player: { connect: { id: ps.player_id } },
-            score: ps.score,
-          })),
-        },
-      },
-      include: {
-        player_scores: {
-          include: {
-            player: true,
-          },
+          create: Object.values(playersAndScores).map(
+            ({ playerId, score }) => ({
+              player: { connect: { id: playerId } },
+              score: score ?? 0,
+            })
+          ),
         },
       },
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 
   revalidatePath("/admin");
+  redirect("/admin");
 }
 
 export async function updateGame(
