@@ -17,7 +17,7 @@ interface LeaderboardTableProps {
 
 const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ data }) => {
   const [sortConfig, setSortConfig] = useState<{ key: keyof LeaderboardData; direction: 'ascending' | 'descending' } | null>(null);
-  const [minGames, setMinGames] = useState<string>('0');
+  const [minGames, setMinGames] = useState<string>('1');
 
   const filteredData = useMemo(() => {
     const minGamesNumber = Number(minGames) || 0;
@@ -73,7 +73,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ data }) => {
             onChange={handleMinGamesChange}
             onBlur={handleMinGamesBlur}
             className="border rounded px-2 py-1 inline-block"
-            min={0}
+            min={1}
           />
         </div>
       </div>
