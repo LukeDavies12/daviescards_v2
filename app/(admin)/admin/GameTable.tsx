@@ -9,7 +9,6 @@ const GameTable = ({ initialGames }: { initialGames: GameWithPlayerScores[] }) =
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // Sort games by date from most recent to oldest
   const sortedGames = initialGames.slice().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const paginatedGames = sortedGames.slice(
@@ -42,61 +41,59 @@ const GameTable = ({ initialGames }: { initialGames: GameWithPlayerScores[] }) =
     console.log("Deleting game with ID:", id);
     if (window.confirm("Are you sure you want to delete this game?")) {
       await deleteGame(id);
-      // You might want to update the local state or refetch the games here
     }
   };
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 md:hidden gap-4">
-        {paginatedGames.map((game) => (
-          <div key={game.id} className="bg-white p-4 rounded-lg shadow-md">
+      <div className="md:hidden">
+        {paginatedGames.map((game: GameWithPlayerScores) => (
+          <div key={game.id} className="border-b border-neutral-100 p-4">
             <p>
-              <strong>Date:</strong>{" "}
               {new Date(game.date).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
-              })}
+                timeZone: "UTC",
+              })} at {game.location} with {game.player_scores.length} players
             </p>
-            <p>
-              <strong>Location:</strong> {game.location}
-            </p>
-            <p>
-              <strong>Players:</strong> {game.player_scores.length}
-            </p>
-            <p>
-              <strong>Message:</strong>{" "}
-              {game.message && game.message.length > 30
-                ? `${game.message.substring(0, 30)}...`
-                : game.message}
+            <p className="border-l-2 border-slate-800 pl-2 mt-2">
+              {game.message}
             </p>
             <button
               onClick={() => toggleRow(game.id)}
-              className="text-blue-500 hover:underline"
+              className="text-neutral-500 hover:underline mt-3"
             >
               {expandedRow === game.id ? "Hide Details" : "View Details"}
             </button>
             {expandedRow === game.id && (
-              <div className="mt-2 text-sm">
-                <p>
-                  <strong>Full Message:</strong> {game.message}
-                </p>
-                <p>
-                  <strong>Players:</strong>{" "}
-                  {game.player_scores
-                    .map(
-                      (playerScore: any) =>
-                        `${playerScore.player.name} (${playerScore.score})`
-                    )
-                    .join(", ")}
-                </p>
+              <div className="text-sm border-gray-100 border rounded-lg p-4 mt-3">
+                  <table className="mt-1 w-full text-sm">
+                    <thead>
+                      <tr>
+                        <th className="text-left">#</th>
+                        <th className="text-left">Player</th>
+                        <th className="text-right">Score</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {game.player_scores
+                        .slice()
+                        .sort((a, b) => b.score - a.score)
+                        .map((playerScore, index) => (
+                          <tr key={playerScore.player.id}>
+                            <td>{index + 1}</td>
+                            <td>{playerScore.player.name}</td>
+                            <td className="text-right">{playerScore.score}</td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
               </div>
             )}
           </div>
         ))}
       </div>
-
       <table className="hidden md:table table-auto w-full border-collapse text-left text-sm">
         <thead>
           <tr>
@@ -117,6 +114,7 @@ const GameTable = ({ initialGames }: { initialGames: GameWithPlayerScores[] }) =
                     year: "numeric",
                     month: "short",
                     day: "numeric",
+                    timeZone: "UTC",
                   })}
                 </td>
                 <td className="py-1">{game.location}</td>

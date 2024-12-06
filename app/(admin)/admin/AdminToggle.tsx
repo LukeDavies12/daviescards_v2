@@ -71,7 +71,39 @@ export default function AdminToggle({
         ) : (
           <>
             <Link href={"/admin/player/new"} className="text-red-700 font-medium my-8 py-1 flex gap-2 items-center">New Player<ArrowRightCircle className="w-4" /></Link>
-            <table className="table-auto w-full border-collapse text-left text-sm">
+            <div className="md:hidden">
+              {initialPlayers.map(player => (
+                <div key={player.id} className="border-b border-neutral-100 py-2 flex justify-between items-center">
+                  <div>
+                    <p className="font-medium">{player.name}</p>
+                    <p className="text-sm text-gray-500">
+                      Created:{" "}
+                      {new Date(player.created_at).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Last Updated:{" "}
+                      {new Date(player.updated_at).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </p>
+                  </div>
+                  <div>
+                    <Link href={`/admin/player/${player.id}`}>
+                      <button className="text-red-700 hover:text-red-500 transition-colors flex gap-1 items-center">
+                        <MoveRightIcon className="w-6 h-6" />
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <table className="hidden md:table table-auto w-full border-collapse text-left text-sm">
               <thead>
                 <tr>
                   <th className="font-medium text-gray-700">Name</th>
