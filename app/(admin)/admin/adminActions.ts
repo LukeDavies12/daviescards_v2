@@ -89,8 +89,8 @@ export async function createGame(formData: FormData) {
     console.error(error);
   }
 
-  revalidatePath("/admin");
-  redirect("/admin");
+  revalidatePath("/", 'layout');
+  redirect("/");
 }
 
 export async function updateGame(gameId: string, formData: FormData) {
