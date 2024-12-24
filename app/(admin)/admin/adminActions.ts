@@ -31,7 +31,7 @@ export async function updatePlayer(playerId: string, formData: FormData) {
     console.log(error);
   }
 
-  revalidatePath("/admin");
+  revalidatePath("/");
   redirect("/admin");
 }
 
@@ -148,7 +148,7 @@ export async function updateGame(gameId: string, formData: FormData) {
     console.log(error);
   }
 
-  revalidatePath("/admin");
+  revalidatePath("/");
   redirect("/admin");
 }
 
@@ -165,5 +165,5 @@ export async function deleteGame(id: string) {
     throw new Error("Game not deleted.");
   }
 
-  revalidatePath("/admin");
+  revalidatePath("/");
 }
